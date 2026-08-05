@@ -107,6 +107,11 @@ Avoid stacking with `pi-zentui`, `pi-powerline-footer`, `@tifan/pi-fixed-editor`
 
 ## Changelog
 
+### 1.1.5
+
+- **Editor frame**: close Sakura Opencode input rows with a width-aware right rail
+- **IME stability**: stop idle footer animation from redrawing Pi's software cursor during Chinese preedit
+
 ### 1.1.4
 
 - **Thinking HUD**: remove the brief pink per-thought timer; the muted total turn timer remains

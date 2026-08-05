@@ -9,7 +9,11 @@ import {
 	visibleWidth,
 } from "@earendil-works/pi-tui";
 import type { PolishedTuiConfig } from "./config";
-import { renderSakuraGradient, SAKURA_MACARON_GRADIENT } from "./gradient";
+import {
+	renderSakuraGradient,
+	renderSakuraSolid,
+	SAKURA_MACARON_GRADIENT,
+} from "./gradient";
 import {
 	EDITOR_ACCENT_FALLBACK,
 	EDITOR_BORDER_FALLBACK,
@@ -132,11 +136,20 @@ function getEditorChromeWidths(config: PolishedTuiConfig, uiTheme: Theme, reset:
 				EDITOR_ACCENT_FALLBACK,
 				config.icons.rail,
 			)}${reset} `;
+	const rightRail =
+		!config.features.copyFriendly &&
+		config.icons.rail.length > 0 &&
+		config.colors.editorBorder === SAKURA_MACARON_GRADIENT
+			? ` ${renderSakuraSolid(config.icons.rail)}`
+			: "";
 	return {
 		prompt,
 		promptWidth: visibleWidth(prompt),
 		rail,
-		railWidth: config.features.copyFriendly ? visibleWidth(prompt) : visibleWidth(rail),
+		rightRail,
+		railWidth: config.features.copyFriendly
+			? visibleWidth(prompt)
+			: visibleWidth(rail) + visibleWidth(rightRail),
 	};
 }
 
@@ -271,7 +284,11 @@ function renderPolishedFrame({
 
 	const reset = "\x1b[0m";
 	const colorSource = config.colorSources.editor;
-	const { prompt, promptWidth, rail, railWidth } = getEditorChromeWidths(config, uiTheme, reset);
+	const { prompt, promptWidth, rail, rightRail, railWidth } = getEditorChromeWidths(
+		config,
+		uiTheme,
+		reset,
+	);
 	const innerWidth = Math.max(0, width - railWidth);
 	const copyFriendlyContinuation = " ".repeat(promptWidth);
 	const isShowingAutocomplete =
@@ -352,7 +369,7 @@ function renderPolishedFrame({
 			]
 		: [
 				top,
-				...lines.map((line) => `${rail}${fillLine(line, innerWidth)}`),
+				...lines.map((line) => `${rail}${fillLine(line, innerWidth)}${rightRail}`),
 				bottom,
 				...autocompleteLines,
 			];

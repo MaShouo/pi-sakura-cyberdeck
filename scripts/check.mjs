@@ -64,4 +64,15 @@ const shimmer = await readFile(resolve(root, "extensions/claude-shimmer/index.ts
 assert.doesNotMatch(shimmer, /thinkingDuration|THOUGHT_DISPLAY_MS|thoughtTimer/);
 assert.match(shimmer, /parts\.push\(rgbAnsi\(MUTED, formatDigital\(elapsed\)\)\)/);
 
+// Sakura editor rows close symmetrically without stealing content width.
+const editor = await readFile(resolve(root, "extensions/zentui/ui.ts"), "utf8");
+assert.match(editor, /const rightRail =/);
+assert.match(editor, /visibleWidth\(rail\) \+ visibleWidth\(rightRail\)/);
+assert.match(editor, /fillLine\(line, innerWidth\)}\$\{rightRail\}/);
+
+// Idle footer animation must not redraw Pi's software cursor during IME preedit.
+const footer = await readFile(resolve(root, "extensions/zentui/footer.ts"), "utf8");
+assert.doesNotMatch(footer, /setInterval\s*\(/);
+assert.doesNotMatch(footer, /pulseTimer/);
+
 console.log("pi-sakura-cyberdeck package check passed");
